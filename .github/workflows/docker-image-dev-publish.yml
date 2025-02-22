@@ -27,6 +27,4 @@ jobs:
     - name: Build and push Docker images
       run: |
         sh develop.build.sh
-        for SERVICE in $SERVICES; do
-          docker push $IMAGE_NAME
-        done
+        sh develop.publish.sh
