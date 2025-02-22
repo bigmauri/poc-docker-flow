@@ -26,9 +26,7 @@ jobs:
 
     - name: Build and push Docker images
       run: |
+        sh develop.build.sh
         for SERVICE in $SERVICES; do
-          IMAGE_NAME="${{ secrets.DOCKERHUB_USERNAME }}/$SERVICE:latest"
-          docker compose build $SERVICE
-          docker tag $SERVICE $IMAGE_NAME
           docker push $IMAGE_NAME
         done
