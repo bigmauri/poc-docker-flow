@@ -1,0 +1,1 @@
+docker compose -f docker-compose.local.yml --env-file _environment/.env.local up --build --watch
