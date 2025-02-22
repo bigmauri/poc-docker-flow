@@ -20,7 +20,7 @@ jobs:
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
     - name: Replace placeholder in .env.develop with commit SHA
-      run: sed -i "s/latest/${{ github.sha }}/g" _environment/.env.develop
+      run: sed -i "s/latest/$(echo ${{ github.sha }} | cut -c1-7)/g" _environment/.env.develop
 
     - name: Extract service names from docker-compose.develop.yml
       id: services
