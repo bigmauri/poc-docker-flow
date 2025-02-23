@@ -32,7 +32,16 @@ jobs:
       - name: Replace placeholder in .env.master with commit SHA
         run: sed -i "s/latest/$(echo ${{ github.sha }} | cut -c1-7)/g" _environment/.env.master
 
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: docker-release-${{ github.ref_name }}
+          path: |
+            ./_environment/*
+            ./docker-compose.${{ github.ref_name }}.yml
+            
       - name: Create release on tag
+        id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -49,6 +58,7 @@ jobs:
       - name: Upload assets to release (optional)
         uses: softprops/action-gh-release@v1
         with:
-          files: |
-            ./_environment/*
-            ./docker-compose.${{ github.ref_name }}.yml
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: docker-release
+          asset_name: docker-release-${{ github.ref_name }}.proto
+          asset_content_type: application/octet-stream
