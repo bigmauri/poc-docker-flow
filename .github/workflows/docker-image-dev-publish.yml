@@ -5,6 +5,8 @@ on:
     branches:
       - "develop"
 
+run-name: "🐳 Docker Build & Push - ${{ github.ref_name }} @ ${{ env.sha7 }}"
+
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
@@ -39,5 +41,3 @@ jobs:
   
       - name: Push Docker images
         run: sh develop.publish.sh
-
-    run-name: "🐳 Docker Build & Push - ${{ github.ref_name }} @ ${{ env.sha7 }}"
