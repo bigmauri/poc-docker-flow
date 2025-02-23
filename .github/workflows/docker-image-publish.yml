@@ -3,6 +3,7 @@ name: "[CI] Docker Build & Push"
 on:
   push:
     branches:
+      - "master"
       - "develop"
 
 run-name: "Run on ${{ github.ref_name }} - '${{ github.event.head_commit.message }}'"
@@ -21,19 +22,19 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
   
-      - name: Replace placeholder in .env.develop with commit SHA
-        run: sed -i "s/latest/$(echo ${{ github.sha }} | cut -c1-7)/g" _environment/.env.develop
+      - name: Replace placeholder in .env.${{ github.ref_name }} with commit SHA
+        run: sed -i "s/latest/$(echo ${{ github.sha }} | cut -c1-7)/g" _environment/.env.${{ github.ref_name }}
   
-      - name: Extract service names from docker-compose.develop.yml
+      - name: Extract service names from docker-compose.${{ github.ref_name }}.yml
         id: services
         run: |
-          echo "SERVICES=$(docker compose -f docker-compose.develop.yml --env-file _environment/.env.develop config --services | tr '\n' ' ')" >> $GITHUB_ENV
+          echo "SERVICES=$(docker compose -f docker-compose.${{ github.ref_name }}.yml --env-file _environment/.env.${{ github.ref_name }} config --services | tr '\n' ' ')" >> $GITHUB_ENV
   
       - name: Build Docker images
-        run: sh develop.build.sh
+        run: sh ${{ github.ref_name }}.build.sh
   
       - name: Docker Images
         run: docker images
   
       - name: Push Docker images
-        run: sh develop.publish.sh
+        run: sh ${{ github.ref_name }}.publish.sh
