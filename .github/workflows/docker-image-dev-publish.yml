@@ -4,39 +4,40 @@ on:
   push:
     branches:
       - "develop"
-      
-run-name: "🐳 Docker Build & Push - ${{ github.ref_name }} @ ${{ env.sha7 }}"
 
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Extract short commit SHA
-      run: echo "SHORT_SHA=$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_ENV  
-    
-    - name: Log in to Docker Hub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Extract short commit SHA
+        id: vars
+        run: echo "sha7=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+      
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+  
+      - name: Replace placeholder in .env.develop with commit SHA
+        run: sed -i "s/latest/$(echo ${{ github.sha }} | cut -c1-7)/g" _environment/.env.develop
+  
+      - name: Extract service names from docker-compose.develop.yml
+        id: services
+        run: |
+          echo "SERVICES=$(docker compose -f docker-compose.develop.yml --env-file _environment/.env.develop config --services | tr '\n' ' ')" >> $GITHUB_ENV
+  
+      - name: Build Docker images
+        run: sh develop.build.sh
+  
+      - name: Docker Images
+        run: docker images
+  
+      - name: Push Docker images
+        run: sh develop.publish.sh
 
-    - name: Replace placeholder in .env.develop with commit SHA
-      run: sed -i "s/latest/$(echo ${{ github.sha }} | cut -c1-7)/g" _environment/.env.develop
-
-    - name: Extract service names from docker-compose.develop.yml
-      id: services
-      run: |
-        echo "SERVICES=$(docker compose -f docker-compose.develop.yml --env-file _environment/.env.develop config --services | tr '\n' ' ')" >> $GITHUB_ENV
-
-    - name: Build Docker images
-      run: sh develop.build.sh
-
-    - name: Docker Images
-      run: docker images
-
-    - name: Push Docker images
-      run: sh develop.publish.sh
+    run-name: "🐳 Docker Build & Push - ${{ github.ref_name }} @ ${{ env.sha7 }}"
