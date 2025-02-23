@@ -50,6 +50,9 @@ jobs:
   
       - name: Replace placeholder in .env.${{ github.ref_name }} with commit SHA
         run: sed -i "s/latest/$(echo ${{ github.sha }} | cut -c1-7)/g" _environment/.env.${{ github.ref_name }}
-
+      
+      - name: Grant execution permission to test-api.sh
+        run: chmod +x ./test-suite/test-api.sh
+      
       - name: Test Docker images
         run: sh ${{ github.ref_name }}.test.sh
