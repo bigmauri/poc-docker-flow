@@ -33,3 +33,6 @@ jobs:
 
       - name: Push Docker images
         run: sh ${{ github.ref_name }}.publish.sh
+        
+  test-automation:
+    runs-on: ubuntu-latest
