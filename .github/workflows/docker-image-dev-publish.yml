@@ -30,7 +30,7 @@ jobs:
     - name: Build Docker images
       run: sh develop.build.sh
 
-    - name: Build Docker images
+    - name: Docker Images
       run: docker images
 
     - name: Push Docker images
