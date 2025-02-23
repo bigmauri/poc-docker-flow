@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - "develop"
+      
+run-name: "🐳 Docker Build & Push - ${{ github.ref_name }} @ ${{ env.sha7 }}"
 
 jobs:
   build-and-push:
@@ -38,10 +40,3 @@ jobs:
 
     - name: Push Docker images
       run: sh develop.publish.sh
-
-run-name: "🐳 Docker Build & Push - ${{ github.ref_name }} @ ${{ env.SHORT_SHA }}"
-
-
-
-
-
