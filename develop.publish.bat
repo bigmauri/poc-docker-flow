@@ -1,0 +1,1 @@
+docker compose -f docker-compose.develop.yml --env-file _environment/.env.develop push
