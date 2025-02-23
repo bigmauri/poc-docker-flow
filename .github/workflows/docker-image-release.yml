@@ -1,0 +1,51 @@
+name: "[CI] Docker Build & Push"
+
+on:
+  push:
+    tags:
+      - 'stable-*'
+      - 'dev-*'
+
+jobs:        
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Git
+        run: git config --global user.name "github-actions" && git config --global user.email "github-actions@github.com"
+
+      - name: Get branch name
+        run: echo "BRANCH_NAME=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+  
+      - name: Replace placeholder in .env.local with commit SHA
+        run: sed -i "s/latest/$(echo ${{ github.sha }} | cut -c1-7)/g" _environment/.env.local
+  
+      - name: Replace placeholder in .env.develop with commit SHA
+        run: sed -i "s/latest/$(echo ${{ github.sha }} | cut -c1-7)/g" _environment/.env.develop
+  
+      - name: Replace placeholder in .env.master with commit SHA
+        run: sed -i "s/latest/$(echo ${{ github.sha }} | cut -c1-7)/g" _environment/.env.master
+
+      - name: Create release on tag
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            ### Release notes:
+            This is an automated release created by GitHub Actions.
+            The tag used for this release is ${{ github.ref }}.
+          draft: ${{ github.ref == 'refs/heads/master' && 'false' || 'true' }}
+          prerelease: ${{ github.ref == 'refs/heads/master' && 'false' || 'true' }}
+
+      - name: Upload assets to release (optional)
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ./_environment/*
+            ./docker-compose.${{ github.ref_name }}.yml
