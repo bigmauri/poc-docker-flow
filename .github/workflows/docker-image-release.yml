@@ -33,7 +33,7 @@ jobs:
         run: sed -i "s/latest/$(echo ${{ github.sha }} | cut -c1-7)/g" _environment/.env.master
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: docker-release-${{ github.ref_name }}
           path: |
