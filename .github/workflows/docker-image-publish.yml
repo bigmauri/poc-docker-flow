@@ -15,35 +15,32 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
   
       - name: Replace placeholder in .env.${{ github.ref_name }} with commit SHA
         run: sed -i "s/latest/$(echo ${{ github.sha }} | cut -c1-7)/g" _environment/.env.${{ github.ref_name }}
-  
-      - name: Extract service names from docker-compose.${{ github.ref_name }}.yml
-        id: services
-        run: |
-          echo "SERVICES=$(docker compose -f docker-compose.${{ github.ref_name }}.yml --env-file _environment/.env.${{ github.ref_name }} config --services | tr '\n' ' ')" >> $GITHUB_ENV
   
       - name: Build Docker images
         run: sh ${{ github.ref_name }}.build.sh
   
       - name: Docker Images
-        run: |
-          echo "####################"
-          echo "## Docker Images ##"
-          echo "####################"
-          docker images
+        run: docker images
 
   push:
     runs-on: ubuntu-latest
     needs: build
 
-    steps:
+    steps:      
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Replace placeholder in .env.${{ github.ref_name }} with commit SHA
+        run: sed -i "s/latest/$(echo ${{ github.sha }} | cut -c1-7)/g" _environment/.env.${{ github.ref_name }}
+
       - name: Push Docker images
         run: sh ${{ github.ref_name }}.publish.sh
