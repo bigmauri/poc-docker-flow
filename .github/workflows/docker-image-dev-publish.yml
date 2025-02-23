@@ -5,7 +5,7 @@ on:
     branches:
       - "develop"
 
-run-name: "🚀 Push triggered by ${{ github.actor }} on ${{ github.ref_name }}"
+run-name: "🚀 Push triggered by ${{ github.actor }} on ${{ github.ref_name }}($(echo ${{ github.sha }} | cut -c1-7))"
 
 jobs:
   build-and-push:
