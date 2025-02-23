@@ -1,9 +1,11 @@
-name: "[CI] Build and Push"
+name: "[CI] Docker Build & Push"
 
 on:
   push:
     branches:
       - "develop"
+
+run-name: "🚀 Push triggered by ${{ github.actor }} on ${{ github.ref_name }}"
 
 jobs:
   build-and-push:
