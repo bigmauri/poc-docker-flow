@@ -1,4 +1,4 @@
-name: Build and Push Docker Images
+name: [CI] Build and Push
 
 on:
   push:
@@ -27,7 +27,11 @@ jobs:
       run: |
         echo "SERVICES=$(docker compose -f docker-compose.develop.yml --env-file _environment/.env.develop config --services | tr '\n' ' ')" >> $GITHUB_ENV
 
-    - name: Build and push Docker images
-      run: |
-        sh develop.build.sh
-        sh develop.publish.sh
+    - name: Build Docker images
+      run: sh develop.build.sh
+
+    - name: Build Docker images
+      run: docker images
+
+    - name: Push Docker images
+      run: sh develop.publish.sh
