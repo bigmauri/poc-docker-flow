@@ -5,7 +5,7 @@ on:
     branches:
       - "develop"
 
-run-name: "🐳 Docker Build & Push - ${{ github.ref_name }} @ ${{ github.sha }}"
+run-name: "🐳 Docker Build & Push - ${{ github.ref_name }} @ ${{ github.sha::7 }}"
 
 jobs:
   build-and-push:
