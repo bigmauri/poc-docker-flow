@@ -7,6 +7,8 @@ services:
     environment:
      - NGINX_HOST=database.local.com
      - NGINX_PORT=80
+    networks:
+      - poc-docker-flow-nw
   be:
     image: "bigmauri/be-nginx:dev-${BACKEND_TAG}"
     build: backend
@@ -15,6 +17,8 @@ services:
     environment:
      - NGINX_HOST=backend.local.com
      - NGINX_PORT=80
+    networks:
+      - poc-docker-flow-nw
   fe:
     image: "bigmauri/fe-nginx:dev-${FRONTEND_TAG}"
     build: frontend
@@ -23,3 +27,9 @@ services:
     environment:
      - NGINX_HOST=frontend.local.com
      - NGINX_PORT=80
+    networks:
+      - poc-docker-flow-nw
+
+networks:
+  poc-docker-flow-nw:
+    driver: bridge

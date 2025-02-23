@@ -1,0 +1,15 @@
+services:
+  test-automation:
+    image: curlimages/curl:latest
+    networks:
+      - poc-docker-flow-nw
+    depends_on:
+      - db
+      - be
+      - fe
+    command: ["/bin/sh", "-c", "/test-suite/test-api.sh"]
+    volumes:
+      - ./test-suite:/test-suite
+
+networks:
+  poc-docker-flow-nw:
