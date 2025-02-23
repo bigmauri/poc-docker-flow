@@ -9,7 +9,7 @@ on:
 run-name: "Run on ${{ github.ref_name }} - '${{ github.event.head_commit.message }}'"
 
 jobs:
-  build:
+  build-and-push:
     runs-on: ubuntu-latest
 
     steps:
