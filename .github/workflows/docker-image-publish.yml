@@ -34,7 +34,11 @@ jobs:
         run: sh ${{ github.ref_name }}.build.sh
   
       - name: Docker Images
-        run: docker images
+        run: |
+          echo "####################"
+          echo "## Docker Images ##"
+          echo "####################"
+          docker images
   
       - name: Push Docker images
         run: sh ${{ github.ref_name }}.publish.sh
