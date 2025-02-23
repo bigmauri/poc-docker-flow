@@ -9,7 +9,7 @@ on:
 run-name: "Run on ${{ github.ref_name }} - '${{ github.event.head_commit.message }}'"
 
 jobs:
-  build-and-push:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -39,6 +39,10 @@ jobs:
           echo "## Docker Images ##"
           echo "####################"
           docker images
-  
+
+  push:
+    runs-on: ubuntu-latest
+
+    steps:
       - name: Push Docker images
         run: sh ${{ github.ref_name }}.publish.sh
